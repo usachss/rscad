@@ -1,0 +1,44 @@
+int i,j,k,p;
+
+string path = "C:\Process";
+string full_name;
+int angle = 0;
+
+SUSPEND 3;
+SetSlider "Subsystem #1 : CTLs : Inputs : PHASEFAULT" = angle;
+
+for (k=0;k<6;k++)		
+{	
+	SetSlider "Subsystem #1 : CTLs : Inputs : R1p" = 10*k+50;
+
+	
+	for (i=0;i<11;i++)
+	{
+		SUSPEND 0.976;
+		SetSlider "Subsystem #1 : CTLs : Inputs : PHI" = i*0.1+0.1;
+		for (j=0;j<100;j++)
+		{
+			SUSPEND 0.5;
+			for (p=0;p<1,1;p++)
+			{	
+				PushButton "Subsystem #1 : CTLs : Inputs : FLT";
+				SUSPEND 0.187;
+				ReleaseButton "Subsystem #1 : CTLs : Inputs : FLT";
+				SUSPEND 5;
+	 			SetSwitch "Energorouter2" = 1;
+				SetSlider "Subsystem #1 : CTLs : Inputs : Kzagr1" = p/10;
+				SUSPEND 20.749;
+				SetSlider "Subsystem #2 : CTLs : Inputs : Kzagr2" = p/10;
+				SetSwitch "Energorouter1" = 0;
+				SUSPEND 25; 
+				full_name = (path::itoa(angle)::"_"::itoa(j)::"_"::itoa(p)::".csv");
+				SavePlotToCSV ("said",full_name);
+				SUSPEND 1;   	
+			}
+      
+		}
+	}
+	
+}
+
+SUSPEND 3;
